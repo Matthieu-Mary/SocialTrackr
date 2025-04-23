@@ -1,0 +1,23 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+Respecter une architecture backend comme celle ci.
+
+backend/
+├── src/
+│   ├── routes/          // Définition des routes (endpoints de l’API)
+│   ├── controllers/     // Logique de gestion des requêtes HTTP
+│   ├── services/        // Logique métier et appels aux modèles
+│   ├── models/          // Schémas de la base de données et accès aux données
+│   ├── config/          // Configuration globale (DB, env, etc.)
+│   ├── middlewares/     // Middlewares Express (auth, erreurs, etc.)
+│   └── app.js           // Point d’entrée Express de l’application
+├── .env                 // Variables d’environnement
+├── .gitignore
+├── package.json
+└── README.md
+
+
