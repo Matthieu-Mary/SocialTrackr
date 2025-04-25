@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const supabase = require("./config/supabase");
+const userRoutes = require("./routes/userRoutes");
 
 // Initialisation de l'application Express
 const app = express();
@@ -14,27 +14,8 @@ app.get("/", (req, res) => {
   res.json({ message: "Bienvenue sur l'API SocialTrackr" });
 });
 
-// Route pour tester la connexion à Supabase
-app.get("/api/test-supabase", async (req, res) => {
-  try {
-    // Vérification simple de la connexion
-    const { data, error } = await supabase.auth.getSession();
-
-    // Même si data est null (pas de session), si error est null, la connexion fonctionne
-    if (error) throw error;
-
-    res.json({
-      message: "Connexion à Supabase réussie",
-      connected: true,
-      url: process.env.SUPABASE_PROJECT_URL,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Erreur de connexion à Supabase",
-      error: error.message,
-    });
-  }
-});
+// Routes utilisateur
+app.use("/api/users", userRoutes);
 
 // Gestionnaire d'erreur 404
 app.use((req, res, next) => {

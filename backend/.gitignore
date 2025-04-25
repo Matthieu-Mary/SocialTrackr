@@ -28,3 +28,6 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo 
+
+# Fichiers textes ou md
+*.fonctionnement-backend-notes.txt
