@@ -3,6 +3,47 @@ const bcrypt = require("bcrypt");
 
 const UserModel = {
   /**
+   * Génère un ID numérique aléatoire à 8 chiffres
+   * @returns {number} - ID numérique
+   */
+  generateRandomId() {
+    // Génération d'un nombre aléatoire entre 10000000 et 99999999 (8 chiffres)
+    return Math.floor(10000000 + Math.random() * 90000000);
+  },
+
+  /**
+   * Vérifie si l'ID existe déjà dans la table Users
+   * @param {number} id - ID à vérifier
+   * @returns {Promise<boolean>} - True si l'ID existe déjà
+   */
+  async idExists(id) {
+    const { data, error } = await supabase
+      .from("Users")
+      .select("id")
+      .eq("id", id)
+      .single();
+
+    return !error && data;
+  },
+
+  /**
+   * Génère un ID unique à 8 chiffres
+   * @returns {Promise<number>} - ID unique
+   */
+  async generateUniqueId() {
+    let id = this.generateRandomId();
+    let exists = await this.idExists(id);
+
+    // Réessayer jusqu'à obtenir un ID unique
+    while (exists) {
+      id = this.generateRandomId();
+      exists = await this.idExists(id);
+    }
+
+    return id;
+  },
+
+  /**
    * Crée un nouvel utilisateur dans Supabase
    * @param {Object} userData - Données de l'utilisateur
    * @returns {Promise<Object>} - Utilisateur créé
@@ -34,12 +75,17 @@ const UserModel = {
         throw new Error("Données utilisateur non retournées par Supabase");
       }
 
+      // Génération d'un ID unique à 8 chiffres
+      const uniqueId = await this.generateUniqueId();
+      console.log("ID unique généré:", uniqueId);
+
       // Création de l'entrée dans la table Users
       const { data, error } = await supabase
         .from("Users")
         .insert([
           {
-            id: authData.user.id,
+            id: uniqueId,
+            auth_id: authData.user.id, // Stockage de l'ID d'authentification dans une colonne séparée
             username: userData.username,
             email: userData.email,
             password: hashedPassword,
@@ -49,7 +95,10 @@ const UserModel = {
         ])
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erreur d'insertion dans la table Users:", error);
+        throw error;
+      }
 
       return { user: data[0], auth: authData };
     } catch (error) {
