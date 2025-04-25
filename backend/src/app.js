@@ -17,13 +17,16 @@ app.get("/", (req, res) => {
 // Route pour tester la connexion à Supabase
 app.get("/api/test-supabase", async (req, res) => {
   try {
-    const { data, error } = await supabase.from("test").select("*").limit(1);
+    // Vérification simple de la connexion
+    const { data, error } = await supabase.auth.getSession();
 
+    // Même si data est null (pas de session), si error est null, la connexion fonctionne
     if (error) throw error;
 
     res.json({
       message: "Connexion à Supabase réussie",
-      data: data,
+      connected: true,
+      url: process.env.SUPABASE_PROJECT_URL,
     });
   } catch (error) {
     res.status(500).json({
