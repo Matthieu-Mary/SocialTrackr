@@ -17,9 +17,22 @@ const UserModel = {
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: userData.email,
         password: userData.password,
+        options: {
+          data: {
+            username: userData.username,
+          },
+        },
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        console.error("Erreur d'authentification:", authError);
+        throw authError;
+      }
+
+      // S'assurer que authData et authData.user existent
+      if (!authData || !authData.user) {
+        throw new Error("Données utilisateur non retournées par Supabase");
+      }
 
       // Création de l'entrée dans la table Users
       const { data, error } = await supabase
