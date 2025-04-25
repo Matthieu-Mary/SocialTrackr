@@ -47,6 +47,41 @@ const UserService = {
       throw error;
     }
   },
+
+  /**
+   * Connecte un utilisateur existant
+   * @param {Object} credentials - Identifiants de connexion (email, password)
+   * @returns {Promise<Object>} - Informations de l'utilisateur authentifié
+   */
+  async loginUser(credentials) {
+    // Validation des données
+    if (!credentials.email || !credentials.password) {
+      throw new Error("Email et mot de passe sont requis");
+    }
+
+    // Trouver l'utilisateur par email
+    const user = await UserModel.findByEmail(credentials.email);
+    if (!user) {
+      throw new Error("Identifiants incorrects");
+    }
+
+    // Vérification du mot de passe
+    const isPasswordValid = await UserModel.verifyPassword(
+      credentials.password,
+      user.password
+    );
+
+    if (!isPasswordValid) {
+      throw new Error("Identifiants incorrects");
+    }
+
+    // Ne pas renvoyer le mot de passe hashé
+    const { password, ...userWithoutPassword } = user;
+
+    // On pourrait ici générer un token JWT si nécessaire
+
+    return userWithoutPassword;
+  },
 };
 
 module.exports = UserService;

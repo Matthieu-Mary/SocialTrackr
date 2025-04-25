@@ -32,6 +32,34 @@ const UserController = {
       });
     }
   },
+
+  /**
+   * Authentifie un utilisateur existant
+   * @param {Object} req - Requête Express
+   * @param {Object} res - Réponse Express
+   */
+  async login(req, res) {
+    try {
+      const credentials = {
+        email: req.body.email,
+        password: req.body.password,
+      };
+
+      const user = await UserService.loginUser(credentials);
+
+      res.status(200).json({
+        success: true,
+        message: "Connexion réussie",
+        user,
+      });
+    } catch (error) {
+      res.status(401).json({
+        success: false,
+        message: "Échec de l'authentification",
+        error: error.message,
+      });
+    }
+  },
 };
 
 module.exports = UserController;

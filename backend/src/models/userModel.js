@@ -105,6 +105,41 @@ const UserModel = {
       throw error;
     }
   },
+
+  /**
+   * Recherche un utilisateur par son email
+   * @param {string} email - Email de l'utilisateur
+   * @returns {Promise<Object|null>} - Utilisateur trouvé ou null
+   */
+  async findByEmail(email) {
+    try {
+      const { data, error } = await supabase
+        .from("Users")
+        .select("*")
+        .eq("email", email)
+        .single();
+
+      if (error) {
+        console.error("Erreur lors de la recherche de l'utilisateur:", error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Exception lors de la recherche de l'utilisateur:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Vérifie si le mot de passe correspond au hash stocké
+   * @param {string} password - Mot de passe en clair
+   * @param {string} hashedPassword - Mot de passe hashé stocké
+   * @returns {Promise<boolean>} - True si le mot de passe correspond
+   */
+  async verifyPassword(password, hashedPassword) {
+    return await bcrypt.compare(password, hashedPassword);
+  },
 };
 
 module.exports = UserModel;
