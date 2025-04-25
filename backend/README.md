@@ -67,3 +67,21 @@ Ce projet suit une architecture en couches:
 - **Controllers** : Gestion des requêtes HTTP
 - **Services** : Logique métier
 - **Models** : Accès aux données
+
+## Configuration de Supabase
+
+Pour connecter l'application à votre base de données Supabase :
+
+1. Créez un fichier `.env` à la racine du projet backend en vous basant sur le fichier `.env.example`
+2. Remplacez les valeurs par vos informations de connexion Supabase :
+   - `SUPABASE_URL`: URL de votre projet Supabase (ex: https://xyzabcdef.supabase.co)
+   - `SUPABASE_KEY`: Clé d'API de votre projet Supabase (utilisez la "anon key" ou "service_role key" selon vos besoins)
+
+Exemple :
+
+```
+SUPABASE_URL=https://votre-projet.supabase.co
+SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+Pour tester la connexion, lancez le serveur et visitez l'endpoint `/api/test-supabase`.
