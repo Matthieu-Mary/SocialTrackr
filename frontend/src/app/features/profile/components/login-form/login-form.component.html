@@ -1,0 +1,72 @@
+<div class="card max-w-md mx-auto">
+  <div class="card-header bg-primary-50">
+    <h2 class="text-xl font-bold text-primary">Connexion</h2>
+    <p class="text-sm text-neutral-600 mt-1">
+      Accédez à votre compte SocialTrackr
+    </p>
+  </div>
+
+  <div class="card-body">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
+      <!-- Email -->
+      <div>
+        <label for="email" class="form-label">Adresse email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="form-input"
+          placeholder="exemple@email.com"
+        />
+        @if (hasError('email', 'required')) {
+        <div class="form-error">L'adresse email est requise</div>
+        } @if (hasError('email', 'email')) {
+        <div class="form-error">Veuillez entrer une adresse email valide</div>
+        }
+      </div>
+
+      <!-- Mot de passe -->
+      <div>
+        <label for="password" class="form-label">Mot de passe</label>
+        <div class="relative">
+          <input
+            [type]="passwordVisible ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            class="form-input pr-10"
+            placeholder="Votre mot de passe"
+          />
+          <button
+            type="button"
+            class="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-500"
+            (click)="togglePasswordVisibility()"
+          >
+            <span class="text-xs">{{
+              passwordVisible ? "Masquer" : "Afficher"
+            }}</span>
+          </button>
+        </div>
+        @if (hasError('password', 'required')) {
+        <div class="form-error">Le mot de passe est requis</div>
+        }
+      </div>
+
+      <div class="flex justify-end">
+        <a href="#" class="text-primary text-sm">Mot de passe oublié ?</a>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" class="btn-primary w-full">Se connecter</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card-footer">
+    <p class="text-sm text-center">
+      Vous n'avez pas de compte ?
+      <a routerLink="/register" class="text-primary font-medium"
+        >Créer un compte</a
+      >
+    </p>
+  </div>
+</div>

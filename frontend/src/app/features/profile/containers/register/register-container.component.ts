@@ -5,8 +5,9 @@ import {
   RegisterFormData,
 } from '../../components/register-form/register-form.component';
 import { Router } from '@angular/router';
-import { RegisterService } from '../../backend-services/register.service';
 import { HttpClientModule } from '@angular/common/http';
+import { AuthService } from '../../../../services/auth.service';
+import { AuthApiService } from '../../backend-services/auth-api.service';
 
 @Component({
   selector: 'app-register-container',
@@ -19,7 +20,7 @@ export class RegisterContainerComponent {
   registrationError: string | null = null;
 
   private _router = inject(Router);
-  private _registerService = inject(RegisterService);
+  private _authApiService = inject(AuthApiService);
 
   handleRegistration(formData: RegisterFormData): void {
     this.registrationInProgress = true;
@@ -29,7 +30,7 @@ export class RegisterContainerComponent {
     const { confirmPassword, ...userData } = formData;
 
     // Envoi des données au service d'inscription
-    this._registerService.register(userData).subscribe({
+    this._authApiService.register(userData).subscribe({
       next: (response) => {
         this.registrationInProgress = false;
 
@@ -37,11 +38,8 @@ export class RegisterContainerComponent {
           // Stockage éventuel des informations utilisateur ou du token
           console.log('Inscription réussie!', response.user);
 
-          // Redirection vers la page de connexion (à implémenter)
-          // this._router.navigate(['/login']);
-
-          // Pour l'instant, affichage d'un message
-          console.log('Redirection vers la connexion...');
+          // Redirection vers la page de connexion
+          this._router.navigate(['/login']);
         } else {
           // Dans le cas où le backend renvoie success: false
           this.registrationError =
@@ -66,9 +64,7 @@ export class RegisterContainerComponent {
   }
 
   handleCancel(): void {
-    // Redirection vers la page d'accueil (à implémenter)
-    // this._router.navigate(['/']);
-
-    console.log('Inscription annulée');
+    // Redirection vers la page de login
+    this._router.navigate(['/login']);
   }
 }

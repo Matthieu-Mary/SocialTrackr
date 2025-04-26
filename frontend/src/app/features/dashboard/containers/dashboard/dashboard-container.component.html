@@ -1,0 +1,68 @@
+<div class="min-h-screen bg-neutral-50">
+  <!-- Header avec navigation -->
+  <header class="bg-white shadow-sm">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <h1 class="text-xl font-bold text-primary">SocialTrackr</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        @if (currentUser) {
+        <div class="text-sm text-neutral-600">
+          Connecté en tant que
+          <span class="font-medium text-primary">{{
+            currentUser.username
+          }}</span>
+        </div>
+        <button (click)="logout()" class="btn-secondary text-sm px-3 py-1">
+          Déconnexion
+        </button>
+        }
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenu principal -->
+  <main class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <h2 class="text-xl font-semibold text-neutral-800 mb-4">
+        Tableau de bord
+      </h2>
+      <p class="text-neutral-600">
+        Bienvenue sur votre tableau de bord SocialTrackr. Ici, vous pourrez
+        gérer vos analyses de réseaux sociaux.
+      </p>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div class="bg-white rounded-lg shadow-sm p-4">
+        <h3 class="text-sm font-medium text-neutral-500 mb-1">Nombre d'amis</h3>
+        <p class="text-2xl font-bold text-primary">0</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-sm p-4">
+        <h3 class="text-sm font-medium text-neutral-500 mb-1">Nouveaux amis</h3>
+        <p class="text-2xl font-bold text-success">0</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-sm p-4">
+        <h3 class="text-sm font-medium text-neutral-500 mb-1">Amis perdus</h3>
+        <p class="text-2xl font-bold text-danger">0</p>
+      </div>
+    </div>
+
+    <!-- Liste des analyses -->
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div
+        class="px-6 py-4 border-b border-neutral-200 flex justify-between items-center"
+      >
+        <h3 class="font-semibold text-neutral-800">Vos analyses récentes</h3>
+        <button class="btn-primary text-sm px-3 py-1">Nouvelle analyse</button>
+      </div>
+      <div class="p-6">
+        <p class="text-neutral-500 text-center py-8">
+          Vous n'avez pas encore d'analyses. Cliquez sur "Nouvelle analyse" pour
+          commencer.
+        </p>
+      </div>
+    </div>
+  </main>
+</div>

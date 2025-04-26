@@ -1,0 +1,43 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Voici un condensé des équivalents signal-based (Angular v17+) pour les décorateurs @Input, @Output, @ViewChild, etc. :
+
+1. Input (Remplace @Input())
+typescript
+import { input } from '@angular/core';
+
+// Déclaration
+name = input<string>();            // Input optionnel
+age = input.required<number>();    // Input obligatoire
+price = input(0);                  // Avec valeur par défaut
+2. Output (Remplace @Output())
+typescript
+import { output } from '@angular/core';
+
+// Déclaration
+onSave = output<void>();          // Événement sans payload
+onUpdate = output<string>();      // Événement avec payload
+
+// Émission
+this.onSave.emit();
+this.onUpdate.emit('Nouvelle valeur');
+3. ViewChild (Remplace @ViewChild())
+typescript
+import { viewChild, viewChildren } from '@angular/core';
+
+// Pour un élément unique (Type: ElementRef, Component ou Directive)
+buttonRef = viewChild<ElementRef>('myButton');        // Par référence template
+myComponent = viewChild(MyComponent);                // Par type de composant
+
+// Pour plusieurs éléments
+items = viewChildren<ElementRef>('.item');
+// Accès (après ngAfterViewInit)
+ngAfterViewInit() {
+  console.log(this.buttonRef()?.nativeElement);
+}
+4. Options de Query (Ex: { read: ElementRef })
+typescript
+element = viewChild('myElement', { read: ElementRef });

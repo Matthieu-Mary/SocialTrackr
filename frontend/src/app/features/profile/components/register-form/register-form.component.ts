@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -6,6 +6,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { inject, output } from '@angular/core';
 
 export interface RegisterFormData {
   username: string;
@@ -17,19 +19,21 @@ export interface RegisterFormData {
 @Component({
   selector: 'app-register-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register-form.component.html',
 })
 export class RegisterFormComponent {
-  @Output() formSubmit = new EventEmitter<RegisterFormData>();
-  @Output() cancelRegistration = new EventEmitter<void>();
+  formSubmit = output<RegisterFormData>();
+  cancelRegistration = output<void>();
 
   registerForm: FormGroup;
   passwordVisible = false;
   confirmPasswordVisible = false;
 
-  constructor(private fb: FormBuilder) {
-    this.registerForm = this.fb.group(
+  private _fb = inject(FormBuilder);
+
+  constructor() {
+    this.registerForm = this._fb.group(
       {
         username: ['', [Validators.required, Validators.minLength(3)]],
         email: ['', [Validators.required, Validators.email]],
