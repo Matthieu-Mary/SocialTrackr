@@ -1,33 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-// Interface pour les données d'inscription
-export interface RegisterRequest {
-  username: string;
-  email: string;
-  password: string;
-}
-
-// Interface pour la réponse du serveur
-export interface RegisterResponse {
-  success: boolean;
-  message: string;
-  user?: {
-    id: string;
-    username: string;
-    email: string;
-    createdAt: string;
-  };
-  error?: string;
-}
+import { RegisterRequest, RegisterResponse } from '../interfaces/register.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RegisterService {
   private apiUrl = 'http://localhost:3000/api/users';
-
   private _http = inject(HttpClient);
 
   /**

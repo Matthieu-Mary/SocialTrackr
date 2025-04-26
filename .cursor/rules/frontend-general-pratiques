@@ -1,3 +1,5 @@
 Toutes les variables private doivent être préfixé par "_" par exemple private _route = inject(Router);
 
 On ne doit utiliser que inject, pour éviter d'utiliser le constructor.
+
+Ne jamais mettre les interfances dans les backend service mais dans le répertoire interface de la feature concerné.
