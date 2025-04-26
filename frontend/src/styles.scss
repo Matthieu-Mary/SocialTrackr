@@ -1,3 +1,113 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Styles globaux personnalisés pour SocialTrackr */
+@layer base {
+  body {
+    @apply bg-neutral-50 text-neutral-800 min-h-screen;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold text-neutral-900;
+  }
+
+  a {
+    @apply text-primary hover:text-primary-600 transition-colors;
+  }
+}
+
+/* Composants personnalisés */
+@layer components {
+  /* Boutons */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-md font-medium transition-colors;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary-600 focus:ring-2 focus:ring-primary-300 focus:outline-none;
+  }
+
+  .btn-secondary {
+    @apply btn bg-white text-primary-700 border border-primary-200 hover:bg-primary-50 focus:ring-2 focus:ring-primary-300 focus:outline-none;
+  }
+
+  .btn-success {
+    @apply btn bg-success text-white hover:bg-success-600 focus:ring-2 focus:ring-success-300 focus:outline-none;
+  }
+
+  .btn-danger {
+    @apply btn bg-danger text-white hover:bg-danger-600 focus:ring-2 focus:ring-danger-300 focus:outline-none;
+  }
+
+  /* Inputs */
+  .form-input {
+    @apply block w-full px-3 py-2 bg-white border border-neutral-300 rounded-md shadow-sm placeholder-neutral-400
+    focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-300;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-neutral-700 mb-1;
+  }
+
+  .form-error {
+    @apply text-sm text-danger mt-1;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden;
+  }
+
+  .card-header {
+    @apply px-6 py-4 border-b border-neutral-200 bg-neutral-50;
+  }
+
+  .card-body {
+    @apply p-6;
+  }
+
+  .card-footer {
+    @apply px-6 py-4 border-t border-neutral-200 bg-neutral-50;
+  }
+
+  /* Comparaison des amis */
+  .friend-added {
+    @apply text-success border-l-4 border-success bg-success-50 pl-3;
+  }
+
+  .friend-removed {
+    @apply text-danger border-l-4 border-danger bg-danger-50 pl-3;
+  }
+
+  .friend-unchanged {
+    @apply text-neutral-600;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply badge bg-primary-100 text-primary-800;
+  }
+
+  .badge-compare {
+    @apply badge bg-compare-100 text-compare-800;
+  }
+
+  .badge-success {
+    @apply badge bg-success-100 text-success-800;
+  }
+
+  .badge-danger {
+    @apply badge bg-danger-100 text-danger-800;
+  }
+}

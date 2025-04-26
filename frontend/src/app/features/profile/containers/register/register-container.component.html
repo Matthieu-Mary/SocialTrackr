@@ -1,0 +1,41 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-3xl mx-auto">
+    <!-- En-tête -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-primary mb-2">SocialTrackr</h1>
+      <p class="text-neutral-600">
+        Suivez les changements dans vos listes d'amis sur les réseaux sociaux
+      </p>
+    </div>
+
+    <!-- Affichage d'une erreur potentielle -->
+    @if (registrationError) {
+    <div
+      class="mb-6 bg-danger-50 text-danger p-4 rounded-md border border-danger-200"
+    >
+      {{ registrationError }}
+    </div>
+    }
+
+    <!-- Formulaire d'inscription -->
+    <app-register-form
+      (formSubmit)="handleRegistration($event)"
+      (cancelRegistration)="handleCancel()"
+    >
+    </app-register-form>
+
+    <!-- Indicateur de chargement -->
+    @if (registrationInProgress) {
+    <div
+      class="fixed inset-0 bg-neutral-900/50 flex items-center justify-center z-50"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+        <div
+          class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"
+        ></div>
+        <p class="text-neutral-700">Inscription en cours...</p>
+      </div>
+    </div>
+    }
+  </div>
+</div>

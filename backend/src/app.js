@@ -1,9 +1,19 @@
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 const userRoutes = require("./routes/userRoutes");
 
 // Initialisation de l'application Express
 const app = express();
+
+// Configuration de CORS
+app.use(
+  cors({
+    origin: "http://localhost:4200", // URL du frontend Angular
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // Middleware pour parser le JSON
 app.use(express.json());
