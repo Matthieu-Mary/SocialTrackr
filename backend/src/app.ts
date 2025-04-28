@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction, Application } from "express";
 import path from "path";
 import cors from "cors";
 import routes from "./routes";
+import instagramRoutes from "./routes/instagramRoutes";
 
 // Initialisation de l'application Express
 const app: Application = express();
@@ -26,6 +27,7 @@ app.get("/", (req: Request, res: Response) => {
 
 // Routes
 app.use("/api", routes);
+app.use("/api/instagram", instagramRoutes);
 
 // Gestionnaire d'erreur 404
 app.use((req: Request, res: Response) => {
