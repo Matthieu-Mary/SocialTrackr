@@ -1,12 +1,15 @@
-const UserModel = require("../models/userModel");
+import UserModel from "../models/userModel";
+import { User, UserCreationData, UserAuthData, UserResponse } from "../types";
 
 const UserService = {
   /**
    * Crée un nouvel utilisateur
-   * @param {Object} userData - Données de l'utilisateur
+   * @param {UserCreationData} userData - Données de l'utilisateur
    * @returns {Promise<Object>} - Utilisateur créé
    */
-  async createUser(userData) {
+  async createUser(
+    userData: UserCreationData
+  ): Promise<{ user: User; auth: any }> {
     // Validation des données
     if (!userData.email || !userData.username || !userData.password) {
       throw new Error("Email, username et password sont requis");
@@ -50,10 +53,10 @@ const UserService = {
 
   /**
    * Connecte un utilisateur existant
-   * @param {Object} credentials - Identifiants de connexion (email, password)
-   * @returns {Promise<Object>} - Informations de l'utilisateur authentifié
+   * @param {UserAuthData} credentials - Identifiants de connexion (email, password)
+   * @returns {Promise<UserResponse>} - Informations de l'utilisateur authentifié
    */
-  async loginUser(credentials) {
+  async loginUser(credentials: UserAuthData): Promise<UserResponse> {
     // Validation des données
     if (!credentials.email || !credentials.password) {
       throw new Error("Email et mot de passe sont requis");
@@ -80,8 +83,8 @@ const UserService = {
 
     // On pourrait ici générer un token JWT si nécessaire
 
-    return userWithoutPassword;
+    return userWithoutPassword as UserResponse;
   },
 };
 
-module.exports = UserService;
+export default UserService;

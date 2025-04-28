@@ -1,14 +1,16 @@
-const UserService = require("../services/userService");
+import { Request, Response } from "express";
+import UserService from "../services/userService";
+import { UserCreationData, UserAuthData } from "../types";
 
 const UserController = {
   /**
    * Crée un nouvel utilisateur
-   * @param {Object} req - Requête Express
-   * @param {Object} res - Réponse Express
+   * @param {Request} req - Requête Express
+   * @param {Response} res - Réponse Express
    */
-  async register(req, res) {
+  async register(req: Request, res: Response): Promise<void> {
     try {
-      const userData = {
+      const userData: UserCreationData = {
         username: req.body.username,
         email: req.body.email,
         password: req.body.password,
@@ -24,7 +26,7 @@ const UserController = {
         message: "Utilisateur créé avec succès",
         user: safeUserData,
       });
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({
         success: false,
         message: "Échec de la création de l'utilisateur",
@@ -35,12 +37,12 @@ const UserController = {
 
   /**
    * Authentifie un utilisateur existant
-   * @param {Object} req - Requête Express
-   * @param {Object} res - Réponse Express
+   * @param {Request} req - Requête Express
+   * @param {Response} res - Réponse Express
    */
-  async login(req, res) {
+  async login(req: Request, res: Response): Promise<void> {
     try {
-      const credentials = {
+      const credentials: UserAuthData = {
         email: req.body.email,
         password: req.body.password,
       };
@@ -52,7 +54,7 @@ const UserController = {
         message: "Connexion réussie",
         user,
       });
-    } catch (error) {
+    } catch (error: any) {
       res.status(401).json({
         success: false,
         message: "Échec de l'authentification",
@@ -62,4 +64,4 @@ const UserController = {
   },
 };
 
-module.exports = UserController;
+export default UserController;

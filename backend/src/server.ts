@@ -1,4 +1,8 @@
-const app = require("./app");
+import app from "./app";
+import dotenv from "dotenv";
+
+// Chargement des variables d'environnement
+dotenv.config();
 
 // Définition du port
 const PORT = process.env.SERVER_PORT || 3000;

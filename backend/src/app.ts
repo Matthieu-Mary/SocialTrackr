@@ -1,10 +1,10 @@
-const express = require("express");
-const path = require("path");
-const cors = require("cors");
-const userRoutes = require("./routes/userRoutes");
+import express, { Request, Response, NextFunction, Application } from "express";
+import path from "path";
+import cors from "cors";
+import routes from "./routes";
 
 // Initialisation de l'application Express
-const app = express();
+const app: Application = express();
 
 // Configuration de CORS
 app.use(
@@ -20,20 +20,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Définition d'une route de base pour tester
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Bienvenue sur l'API SocialTrackr" });
 });
 
-// Routes utilisateur
-app.use("/api/users", userRoutes);
+// Routes
+app.use("/api", routes);
 
 // Gestionnaire d'erreur 404
-app.use((req, res, next) => {
+app.use((req: Request, res: Response) => {
   res.status(404).json({ message: "Route non trouvée" });
 });
 
 // Gestionnaire d'erreur global
-app.use((err, req, res, next) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
   res.status(500).json({
     message: "Erreur serveur",
@@ -41,4 +41,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-module.exports = app;
+export default app;
