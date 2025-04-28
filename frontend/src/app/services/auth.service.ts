@@ -6,6 +6,7 @@ import {
   LoginResponse,
 } from '../features/profile/interfaces/login.interface';
 import { AuthApiService } from '../features/profile/backend-services/auth-api.service';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,10 @@ export class AuthService {
   private readonly USER_STORAGE_KEY = 'socialtrackr_user';
   private readonly TOKEN_STORAGE_KEY = 'socialtrackr_token';
 
+  private _storageService = inject(StorageService);
+  private _router = inject(Router);
+  private _authApiService = inject(AuthApiService);
+
   // Signal pour l'état d'authentification
   private _isAuthenticatedSignal = signal<boolean>(
     this._hasValidStoredCredentials()
@@ -21,9 +26,6 @@ export class AuthService {
 
   // Référence au signal comme propriété en lecture seule
   readonly isAuthenticated$ = this._isAuthenticatedSignal.asReadonly();
-
-  private _router = inject(Router);
-  private _authApiService = inject(AuthApiService);
 
   /**
    * Authentifie un utilisateur via le service d'API
@@ -47,8 +49,8 @@ export class AuthService {
    */
   logout(): void {
     // Suppression des données stockées
-    localStorage.removeItem(this.USER_STORAGE_KEY);
-    localStorage.removeItem(this.TOKEN_STORAGE_KEY);
+    this._storageService.removeItem(this.USER_STORAGE_KEY);
+    this._storageService.removeItem(this.TOKEN_STORAGE_KEY);
 
     // Mise à jour du signal
     this._isAuthenticatedSignal.set(false);
@@ -70,7 +72,7 @@ export class AuthService {
    * @returns Les données utilisateur ou null si non connecté
    */
   getCurrentUser(): any {
-    const userData = localStorage.getItem(this.USER_STORAGE_KEY);
+    const userData = this._storageService.getItem(this.USER_STORAGE_KEY);
     return userData ? JSON.parse(userData) : null;
   }
 
@@ -79,7 +81,10 @@ export class AuthService {
    * @param userData Les données utilisateur à stocker
    */
   private _storeUserData(userData: any): void {
-    localStorage.setItem(this.USER_STORAGE_KEY, JSON.stringify(userData));
+    this._storageService.setItem(
+      this.USER_STORAGE_KEY,
+      JSON.stringify(userData)
+    );
   }
 
   /**
@@ -87,7 +92,7 @@ export class AuthService {
    * @returns true si des identifiants valides sont stockés, false sinon
    */
   private _hasValidStoredCredentials(): boolean {
-    const userData = localStorage.getItem(this.USER_STORAGE_KEY);
+    const userData = this._storageService.getItem(this.USER_STORAGE_KEY);
     return !!userData;
   }
 }
