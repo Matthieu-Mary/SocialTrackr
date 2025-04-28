@@ -16,7 +16,7 @@ export class AuthService {
 
   // Signal pour l'état d'authentification
   private _isAuthenticatedSignal = signal<boolean>(
-    this.hasValidStoredCredentials()
+    this._hasValidStoredCredentials()
   );
 
   // Référence au signal comme propriété en lecture seule
@@ -35,7 +35,7 @@ export class AuthService {
       tap((response) => {
         if (response.success && response.user) {
           // Stockage de l'utilisateur et mise à jour du signal
-          this.storeUserData(response.user);
+          this._storeUserData(response.user);
           this._isAuthenticatedSignal.set(true);
         }
       })
@@ -78,7 +78,7 @@ export class AuthService {
    * Stocke les données de l'utilisateur dans le localStorage
    * @param userData Les données utilisateur à stocker
    */
-  private storeUserData(userData: any): void {
+  private _storeUserData(userData: any): void {
     localStorage.setItem(this.USER_STORAGE_KEY, JSON.stringify(userData));
   }
 
@@ -86,7 +86,7 @@ export class AuthService {
    * Vérifie si des identifiants valides sont stockés dans le localStorage
    * @returns true si des identifiants valides sont stockés, false sinon
    */
-  private hasValidStoredCredentials(): boolean {
+  private _hasValidStoredCredentials(): boolean {
     const userData = localStorage.getItem(this.USER_STORAGE_KEY);
     return !!userData;
   }

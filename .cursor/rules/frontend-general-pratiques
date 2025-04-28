@@ -1,4 +1,4 @@
-Toutes les variables private doivent être préfixé par "_" par exemple private _route = inject(Router);
+Toutes les variables et méthodes private doivent être préfixé par "_" par exemple private _route = inject(Router);
 
 On ne doit utiliser que inject, pour éviter d'utiliser le constructor.
 
