@@ -265,9 +265,6 @@ export class InstagramService {
       if (currentUrl.includes("/accounts/login")) {
         console.log("Redirection vers la page de connexion détectée");
 
-        // Prenons une capture d'écran pour voir ce qui se passe
-        await page.screenshot({ path: `debug-${username}.png` });
-
         // Essayer d'extraire les informations même sur la page de connexion
         // Instagram affiche souvent le nombre de followers même sur cette page
         try {
@@ -315,9 +312,6 @@ export class InstagramService {
           "L'accès aux données nécessite une connexion Instagram"
         );
       }
-
-      // Prendre une capture d'écran pour le debug
-      await page.screenshot({ path: `profile-${username}.png` });
 
       console.log("Attente du chargement des statistiques...");
       // Attendre que les statistiques soient chargées (sélecteur plus générique)
