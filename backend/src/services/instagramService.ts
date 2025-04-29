@@ -16,17 +16,25 @@ export class InstagramService {
 
   private async initializeBrowser() {
     if (!this.browser) {
-      this.browser = await puppeteer.launch({
-        headless: false,
-        args: [
-          "--no-sandbox",
-          "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-accelerated-2d-canvas",
-          "--disable-gpu",
-          "--window-size=1920x1080",
-        ],
-      });
+      try {
+        // Configuration simplifiée pour éviter les erreurs de lancement
+        this.browser = await puppeteer.launch({
+          headless: false,
+          args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-dev-shm-usage",
+            "--window-size=1920x1080",
+          ],
+        });
+
+        console.log("Navigateur lancé avec succès");
+      } catch (error) {
+        console.error("Erreur lors du lancement du navigateur:", error);
+        throw new Error(
+          "Impossible de lancer le navigateur. Vérifiez que Chrome est installé."
+        );
+      }
     }
   }
 
@@ -207,6 +215,163 @@ export class InstagramService {
       count: followers.length,
       followers,
     };
+  }
+
+  public async getFollowersCount(username: string): Promise<number> {
+    await this.initializeBrowser();
+    if (!this.browser) throw new Error("Browser not initialized");
+
+    const page = await this.browser.newPage();
+
+    try {
+      // Configurer les headers pour ressembler à un vrai navigateur
+      await page.setUserAgent(
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+      );
+
+      // Ajouter des headers supplémentaires pour éviter la détection
+      await page.setExtraHTTPHeaders({
+        "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "sec-ch-ua":
+          '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"Windows"',
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
+      });
+
+      // Accéder à la page de profil
+      console.log(`Accès à la page de profil de ${username}...`);
+      const response = await page.goto(
+        `https://www.instagram.com/${username}/`,
+        {
+          waitUntil: "networkidle2",
+          timeout: 30000,
+        }
+      );
+
+      if (!response || response.status() === 404) {
+        throw new Error(`L'utilisateur ${username} n'existe pas sur Instagram`);
+      }
+
+      // Voir si nous sommes redirigés vers la page de connexion
+      const currentUrl = page.url();
+      console.log("URL actuelle:", currentUrl);
+
+      if (currentUrl.includes("/accounts/login")) {
+        console.log("Redirection vers la page de connexion détectée");
+
+        // Prenons une capture d'écran pour voir ce qui se passe
+        await page.screenshot({ path: `debug-${username}.png` });
+
+        // Essayer d'extraire les informations même sur la page de connexion
+        // Instagram affiche souvent le nombre de followers même sur cette page
+        try {
+          // Attendre le chargement du contenu minimal
+          await page.waitForSelector("body", { timeout: 5000 });
+
+          // Extraire les méta-données
+          const metaData = await page.evaluate(() => {
+            const metaTags = document.querySelectorAll('meta[property^="og:"]');
+            const data: Record<string, string> = {};
+
+            metaTags.forEach((tag) => {
+              const property = tag.getAttribute("property");
+              const content = tag.getAttribute("content");
+              if (property && content) {
+                data[property] = content;
+              }
+            });
+
+            return data;
+          });
+
+          console.log("Méta-données:", metaData);
+
+          // Vérifier si les méta-données contiennent le nombre de followers
+          if (metaData["og:description"]) {
+            const description = metaData["og:description"];
+            const followerMatch = description.match(
+              /(\d+(?:,\d+)*)\s+followers/i
+            );
+
+            if (followerMatch && followerMatch[1]) {
+              const followersStr = followerMatch[1].replace(/,/g, "");
+              return parseInt(followersStr, 10);
+            }
+          }
+        } catch (metaError) {
+          console.error(
+            "Erreur lors de l'extraction des méta-données:",
+            metaError
+          );
+        }
+
+        throw new Error(
+          "L'accès aux données nécessite une connexion Instagram"
+        );
+      }
+
+      // Prendre une capture d'écran pour le debug
+      await page.screenshot({ path: `profile-${username}.png` });
+
+      console.log("Attente du chargement des statistiques...");
+      // Attendre que les statistiques soient chargées (sélecteur plus générique)
+      await page.waitForSelector("header section ul li", { timeout: 10000 });
+
+      // Extraire le nombre de followers avec un sélecteur plus robuste
+      const followersCount = await page.evaluate(() => {
+        // Sélectionner tous les éléments li dans la section d'en-tête
+        const statElements = document.querySelectorAll("header section ul li");
+
+        // Parcourir les éléments pour trouver celui qui contient "followers" ou "abonnés"
+        for (const element of Array.from(statElements)) {
+          const text = element.textContent || "";
+          if (text.includes("followers") || text.includes("abonnés")) {
+            // Extraire juste le nombre
+            const countMatch = text.match(/(\d+(?:[.,]\d+)*[km]?)/i);
+            if (countMatch && countMatch[1]) {
+              let count = countMatch[1].toLowerCase();
+
+              // Convertir k/m en valeurs numériques
+              if (count.endsWith("k")) {
+                return Math.round(parseFloat(count.replace("k", "")) * 1000);
+              } else if (count.endsWith("m")) {
+                return Math.round(parseFloat(count.replace("m", "")) * 1000000);
+              } else {
+                return parseInt(count.replace(/[.,]/g, ""), 10);
+              }
+            }
+          }
+        }
+
+        // Fallback: essayer avec le sélecteur de classe spécifique
+        const stats = document.querySelectorAll('span[class*="_ac2a"]');
+        if (stats.length >= 2) {
+          const followersText = stats[1].textContent;
+          if (followersText) {
+            return parseInt(followersText.replace(/[.,]/g, ""), 10);
+          }
+        }
+
+        return 0;
+      });
+
+      console.log(`Nombre de followers trouvé: ${followersCount}`);
+      return followersCount;
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération du nombre de followers:",
+        error
+      );
+      throw error;
+    } finally {
+      await page.close();
+    }
   }
 
   public async close() {

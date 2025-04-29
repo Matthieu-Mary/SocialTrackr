@@ -2,28 +2,29 @@ import { Request, Response } from "express";
 import { InstagramService } from "../services/instagramService";
 
 export class InstagramController {
-  private instagramService: InstagramService;
+  private _instagramService: InstagramService;
 
   constructor() {
-    this.instagramService = InstagramService.getInstance();
+    this._instagramService = InstagramService.getInstance();
   }
 
-  public getFollowers = async (req: Request, res: Response): Promise<void> => {
+  public getFollowers = async (req: Request, res: Response) => {
     try {
       const { username } = req.params;
+      const result = await this._instagramService.getFollowers(username);
+      res.json(result);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 
-      if (!username) {
-        res.status(400).json({ error: "Le nom d'utilisateur est requis" });
-        return;
-      }
-
-      const followers = await this.instagramService.getFollowers(username);
-      res.status(200).json({ followers });
-    } catch (error) {
-      console.error("Erreur dans le contrôleur:", error);
-      res
-        .status(500)
-        .json({ error: "Erreur lors de la récupération des followers" });
+  public getFollowersCount = async (req: Request, res: Response) => {
+    try {
+      const { username } = req.params;
+      const count = await this._instagramService.getFollowersCount(username);
+      res.json({ count });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
   };
 }
